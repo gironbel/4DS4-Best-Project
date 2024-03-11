@@ -25,6 +25,8 @@
 #define RIGHT_BIT				//Define event group bit
 #define UP_BIT					//Define event group bit
 #define DOWN_BIT				//Define event group bit
+//extern char ch;
+//extern int new_char=0;
 
 extern EventGroupHandle_t event_group;
 extern QueueHandle_t uart_queue;

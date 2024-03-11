@@ -14,7 +14,27 @@
 #include "Motor_Control_Component.h"
 #include "LED_Component.h"
 
-#define RC_UART		//Define UART for RC receiver
+#define RC_UART	UART1	//Define UART for RC receiver
+
+typedef struct
+{
+	uint16_t header;
+	uint16_t ch1;
+	uint16_t ch2;
+	uint16_t ch3;
+	uint16_t ch4;
+	uint16_t ch5;
+	uint16_t ch6;
+	uint16_t ch7;
+	uint16_t ch8;
+} RC_Values;
+
+typedef struct
+{
+	QueueHandle_t motor_q;
+	QueueHandle_t position_q;
+
+} RC_queues;
 
 extern SemaphoreHandle_t rc_hold_semaphore;
 extern TaskHandle_t rc_task_handle;

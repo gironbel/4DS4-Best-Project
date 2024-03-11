@@ -33,6 +33,10 @@ void setupTerminalComponent()
 void setupTerminalPins()
 {
     //Configure UART pins
+	PORT_SetPinMux(PORTC,13U,kPORT_MuxAlt3); //port C pin 13, function 3 (UART4 CTS)
+    PORT_SetPinMux(PORTC,14U,kPORT_MuxAlt3); //port C pin 14, function 3 (UART4 RX)
+	PORT_SetPinMux(PORTC,15U,kPORT_MuxAlt3); //port C pin 15, function 3 (UART4 TX)
+	PORT_SetPinMux(PORTE,27U,kPORT_MuxAlt3); //port E pin 27, function 3 (UART4 RTS)
 }
 
 void sendMessage(const char *format, ...)
@@ -56,6 +60,19 @@ void sendMessage(const char *format, ...)
 void setupUART()
 {
 	//Setup UART for sending and receiving
+	uart_config_t config;
+	UART_GetDefaultConfig(&config);
+	config.baudRate_Bps = 57600;
+	config.enableTx = true;
+	config.enableRx = true;
+	config.enableRxRTS = true;
+	config.enableTxCTS = true;
+
+	UART_Init(TARGET_UART, &config, CLOCK_GetFreq(kCLOCK_BusClk));
+
+	/******** Enable Interrupts *********/
+	UART_EnableInterrupts(TARGET_UART, kUART_RxDataRegFullInterruptEnable);
+	EnableIRQ(UART4_RX_TX_IRQn);
 }
 
 void uartTask(void* pvParameters)
@@ -79,9 +96,14 @@ void uartTask(void* pvParameters)
 	}
 }
 
+char ch;
+int new_char=0;
 void UART4_RX_TX_IRQHandler()
 {
 	//UART ISR
+	UART_GetStatusFlags(TARGET_UART);
+	ch = UART_ReadByte(TARGET_UART);
+	new_char = 1;
 }
 
 void terminalControlTask(void* pvParameters)

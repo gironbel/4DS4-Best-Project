@@ -12,9 +12,9 @@
 
 #include "Terminal_Component.h"
 
-#define FTM_MOTORS 				FTM0
-#define FTM_CHANNEL_DC_MOTOR	//Define DC motor channel
-#define FTM_CHANNEL_SERVO		//Define servo PWM channel
+#define FTM_MOTOR FTM0
+#define FTM_CHANNEL_DC_MOTOR kFTM_Chnl_0
+#define FTM_CHANNEL_SERVO_MOTOR kFTM_Chnl_3
 
 extern QueueHandle_t motor_queue, angle_queue;
 
