@@ -106,9 +106,9 @@ void rcTask(void* pvParameters)
 				while (1);
 			}
 
-			reflected_value = (rc_values.ch1)*(-1) + 3000;
-			//scaled_position = (rc_values.ch1 - 1500)/5;  //right joystick horizontal axis
-			scaled_position = (reflected_value - 1500)/5;  //reflected rotation for more intuitive controls
+			//reflected_value = (rc_values.ch1)*(-1) + 3000; //reflected rotation for more intuitive controls
+			scaled_position = (rc_values.ch1 - 1500)/5;  //right joystick horizontal axis
+			//scaled_position = (reflected_value - 1500)/5;
 
 			status = xQueueSendToBack(angle_queue, (void*) &scaled_position, portMAX_DELAY);
 			if (status != pdPASS) //check if sending function was executed correctly
