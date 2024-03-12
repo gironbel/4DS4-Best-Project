@@ -133,7 +133,7 @@ void motorTask(void* pvParameters)
 {
 	//Motor task implementation
 	int input_speed;
-	float dutyCycleServoMotor;
+	float dutyCycleMotor;
 	QueueHandle_t motor_q = (QueueHandle_t)pvParameters;
 	BaseType_t status;
 
@@ -150,9 +150,8 @@ void motorTask(void* pvParameters)
 
     	}
 
-
-    	dutyCycleServoMotor=input_speed*0.025f/100.0f +0.075;
-    	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, dutyCycleServoMotor);
+    	dutyCycleMotor=input_speed*0.025f/100.0f +0.075;
+    	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, dutyCycleMotor);
     	printf("Received motor speed:%d\n",input_speed);
     	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
     	vTaskDelay(1/ portTICK_PERIOD_MS);
@@ -181,7 +180,7 @@ void positionTask(void* pvParameters)
 
     	}
 
-    	dutyCycleServoMotor=position*0.025f/100.0f +0.075;
+    	dutyCycleServoMotor=position*0.025f/100.0f + 0.075;
     	updatePWM_dutyCycle(FTM_CHANNEL_SERVO_MOTOR, dutyCycleServoMotor);
     	printf("Received position :%d\n",position);
 //    	FTM_SetSoftwareTrigger(FTM_MOTOR,true);

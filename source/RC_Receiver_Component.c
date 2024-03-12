@@ -60,7 +60,7 @@ void rcTask(void* pvParameters)
 //	QueueHandle_t angle_q = ((RC_queues*)pvParameters)->position_q;
 
 	int scaled_speed,scaled_position;
-	int rc_speed;
+	int rc_speed, reflected_value;
 
 	while (1)
 	{
@@ -73,10 +73,15 @@ void rcTask(void* pvParameters)
 		{
 			scaled_speed = (rc_values.ch3 - 1000)/10; //left joystick vertical axis to control accel
 			rc_speed = rc_values.ch5;
-			printf("Channel 5 = %d\t", rc_speed);
+			printf("Channel 5 = %d\n", rc_speed);
 			//Reverse motor speed if channel 6 is set
 			if (rc_values.ch6 > 1500){
 				scaled_speed *=-1;
+				printf("Wheels are moving backwards\n");
+			}
+			else
+			{
+				printf("Wheels are moving forwards\n");
 			}
 			// Setting different speed modes. 25 power in lowest setting, half at middle and full at full setting
 			switch (rc_values.ch5){
@@ -101,7 +106,10 @@ void rcTask(void* pvParameters)
 				while (1);
 			}
 
-			scaled_position = (rc_values.ch1 - 1500)/5;  //right joystick horizontal axis
+			reflected_value = (rc_values.ch1)*(-1) + 3000;
+			//scaled_position = (rc_values.ch1 - 1500)/5;  //right joystick horizontal axis
+			scaled_position = (reflected_value - 1500)/5;  //reflected rotation for more intuitive controls
+
 			status = xQueueSendToBack(angle_queue, (void*) &scaled_position, portMAX_DELAY);
 			if (status != pdPASS) //check if sending function was executed correctly
 			{
