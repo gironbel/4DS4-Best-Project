@@ -59,7 +59,7 @@ BOARD_InitPins:
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void)
 {
-    /* Port B Clock Gate Control: Clock enabled */
+    /* All clocks enabled*/
 	CLOCK_EnableClock(kCLOCK_PortA);
 	CLOCK_EnableClock(kCLOCK_PortB);
 	CLOCK_EnableClock(kCLOCK_PortC);

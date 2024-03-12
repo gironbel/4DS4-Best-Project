@@ -16,7 +16,7 @@
 #define FTM_CHANNEL_DC_MOTOR kFTM_Chnl_0
 #define FTM_CHANNEL_SERVO_MOTOR kFTM_Chnl_3
 
-extern QueueHandle_t motor_queue, angle_queue;
+extern QueueHandle_t motor_queue, angle_queue; //declared here, should be able to be used in all files
 
 void setupMotorComponent();
 void setupDCMotor();

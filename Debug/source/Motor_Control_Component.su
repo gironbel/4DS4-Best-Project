@@ -1,6 +1,6 @@
-C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
-C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_ftm.h:731:20:FTM_StartTimer	24	static
-C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_ftm.h:1027:20:FTM_SetSoftwareTrigger	16	static
+C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
+C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_ftm.h:731:20:FTM_StartTimer	24	static
+C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_ftm.h:1027:20:FTM_SetSoftwareTrigger	16	static
 ../source/Motor_Control_Component.c:11:6:setupMotorComponent	24	static
 ../source/Motor_Control_Component.c:46:6:firstRun	16	static
 ../source/Motor_Control_Component.c:55:6:setupMotorPins	8	static

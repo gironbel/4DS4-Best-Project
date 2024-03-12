@@ -148,4 +148,5 @@ status_t SPI_receive(uint8_t regAddress, uint8_t *rxBuff, uint8_t rxBuffSize) //
 void accelerometerTask(void* pvParameters)
 {
 	//Accelerometer task implementation
+	//bonus
 }

@@ -153,7 +153,7 @@ void motorTask(void* pvParameters)
 
     	dutyCycleServoMotor=input_speed*0.025f/100.0f +0.075;
     	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, dutyCycleServoMotor);
-    	printf("Recieved motor speed:%d\n",input_speed);
+    	printf("Received motor speed:%d\n",input_speed);
     	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
     	vTaskDelay(1/ portTICK_PERIOD_MS);
     }

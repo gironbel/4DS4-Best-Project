@@ -1,9 +1,13 @@
-C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
-C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_ftm.h:731:20:FTM_StartTimer	24	static
-../source/LED_Component.c:5:6:setupLEDComponent	8	static
-../source/LED_Component.c:15:6:pwm_setupB	56	static
-../source/LED_Component.c:33:6:pwm_setupG	56	static
-../source/LED_Component.c:51:6:pwm_setupR	56	static
-../source/LED_Component.c:69:6:setupLEDPins	8	static
-../source/LED_Component.c:77:6:setupLEDs	8	static
-../source/LED_Component.c:86:6:ledTask	16	static
+C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
+C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_ftm.h:731:20:FTM_StartTimer	24	static
+C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_ftm.h:1027:20:FTM_SetSoftwareTrigger	16	static
+../source/LED_Component.c:5:6:setupLEDComponent	24	static
+../source/LED_Component.c:23:6:pwm_setupB	56	static
+../source/LED_Component.c:41:6:pwm_setupG	56	static
+../source/LED_Component.c:59:6:pwm_setupR	56	static
+../source/LED_Component.c:77:6:setupLEDPins	8	static
+../source/LED_Component.c:86:6:setupLEDs	8	static
+../source/LED_Component.c:95:6:activateGPIOPin	16	static
+../source/LED_Component.c:100:6:portToggle	16	static
+../source/LED_Component.c:105:6:longDelay	16	static
+../source/LED_Component.c:114:6:ledTask	32	static

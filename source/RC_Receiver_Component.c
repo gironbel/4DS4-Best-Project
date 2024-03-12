@@ -11,6 +11,7 @@ void setupRCReceiverComponent()
 	RC_queues controller_data;
 	controller_data.motor_q = &motor_queue;
 	controller_data.position_q = &angle_queue;
+	controller_data.led_q = &led_queue;
 
     /*************** RC Task ***************/
 	//Create RC Semaphore
@@ -51,12 +52,15 @@ void rcTask(void* pvParameters)
 	uint8_t* ptr = (uint8_t*) &rc_values;
 	BaseType_t status;
 	//RC task implementation
-	QueueHandle_t motor_q= motor_queue;
-	QueueHandle_t angle_q=angle_queue;
+	QueueHandle_t motor_q = motor_queue; //needed if we use motor_queue directly? wouldn't we need to recast pvparams?
+	QueueHandle_t angle_q = angle_queue;
+	QueueHandle_t led_q = led_queue;
+
 //	QueueHandle_t motor_q = ((RC_queues*)pvParameters)->motor_q; //dereferencing
 //	QueueHandle_t angle_q = ((RC_queues*)pvParameters)->position_q;
 
 	int scaled_speed,scaled_position;
+	int rc_speed;
 
 	while (1)
 	{
@@ -67,8 +71,9 @@ void rcTask(void* pvParameters)
 		UART_ReadBlocking(UART1, &ptr[1], sizeof(rc_values) - 1);
 		if(rc_values.header == 0x4020)
 		{
-			scaled_speed = (rc_values.ch3 - 1000)/10; //right joystick up and down to control accel
-
+			scaled_speed = (rc_values.ch3 - 1000)/10; //left joystick vertical axis to control accel
+			rc_speed = rc_values.ch5;
+			printf("Channel 5 = %d\t", rc_speed);
 			//Reverse motor speed if channel 6 is set
 			if (rc_values.ch6 > 1500){
 				scaled_speed *=-1;
@@ -83,14 +88,21 @@ void rcTask(void* pvParameters)
 			default:
 				scaled_speed *= .25;
 			}
-			status = xQueueSendToBack(motor_queue, (void*) &scaled_speed, portMAX_DELAY); //will write the string at the back of the queue
+			status = xQueueSendToBack(motor_queue, (void*) &scaled_speed, portMAX_DELAY);
 			if (status != pdPASS) //check if sending function was executed correctly
 			{
 				PRINTF("Queue Send failed!.\r\n");
 				while (1);
 			}
-			scaled_position = (rc_values.ch1 - 1500)/5;  //left joystick left and right to control angle of wheels
-			status = xQueueSendToBack(angle_queue, (void*) &scaled_position, portMAX_DELAY); //will write the string at the back of the queue
+			status = xQueueSendToBack(led_queue, (void*) &rc_speed, portMAX_DELAY); //sending speed_data to led queue
+			if (status != pdPASS) //check if sending function was executed correctly
+			{
+				PRINTF("Queue Send failed!.\r\n");
+				while (1);
+			}
+
+			scaled_position = (rc_values.ch1 - 1500)/5;  //right joystick horizontal axis
+			status = xQueueSendToBack(angle_queue, (void*) &scaled_position, portMAX_DELAY);
 			if (status != pdPASS) //check if sending function was executed correctly
 			{
 				PRINTF("Queue Send failed!.\r\n");

@@ -16,7 +16,7 @@
 
 #define RC_UART	UART1	//Define UART for RC receiver
 
-typedef struct
+typedef struct //holds all RC channel data contiguously
 {
 	uint16_t header;
 	uint16_t ch1;
@@ -29,10 +29,11 @@ typedef struct
 	uint16_t ch8;
 } RC_Values;
 
-typedef struct
+typedef struct //holds two queues
 {
 	QueueHandle_t motor_q;
 	QueueHandle_t position_q;
+	QueueHandle_t led_q;
 
 } RC_queues;
 

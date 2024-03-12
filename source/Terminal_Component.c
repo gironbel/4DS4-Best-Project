@@ -98,6 +98,7 @@ void uartTask(void* pvParameters)
 
 char ch;
 int new_char=0;
+
 void UART4_RX_TX_IRQHandler()
 {
 	//UART ISR
@@ -109,4 +110,5 @@ void UART4_RX_TX_IRQHandler()
 void terminalControlTask(void* pvParameters)
 {
 	//Terminal Control Task implementation
+	//bonus
 }
