@@ -1,5 +1,5 @@
-C:\Users\gironbel\Desktop\project1-group-100-the-best-team\frdmk66f_freertos_hello\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
+C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
 ../source/RC_Receiver_Component.c:6:6:setupRCReceiverComponent	32	static
-../source/RC_Receiver_Component.c:30:6:setupRCPins	8	static
-../source/RC_Receiver_Component.c:36:6:setupUART_RC	24	static
-../source/RC_Receiver_Component.c:47:6:rcTask	64	static
+../source/RC_Receiver_Component.c:29:6:setupRCPins	8	static
+../source/RC_Receiver_Component.c:35:6:setupUART_RC	24	static
+../source/RC_Receiver_Component.c:46:6:rcTask	64	static

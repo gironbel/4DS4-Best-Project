@@ -1,5 +1,5 @@
-C:\Users\gironbel\Desktop\project1-group-100-the-best-team\frdmk66f_freertos_hello\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
-C:\Users\gironbel\Desktop\project1-group-100-the-best-team\frdmk66f_freertos_hello\drivers/fsl_gpio.h:162:20:GPIO_PinWrite	24	static
+C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
+C:\Users\raufr\Desktop\4DS4 Group70\4DS4-Best-Project\drivers/fsl_gpio.h:162:20:GPIO_PinWrite	24	static
 ../source/Accelerometer_Component.c:6:6:setupAccelerometerComponent	8	static
 ../source/Accelerometer_Component.c:18:6:setupAccelerometerPins	8	static
 ../source/Accelerometer_Component.c:30:6:voltageRegulator_enable	16	static

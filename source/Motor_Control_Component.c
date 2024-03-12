@@ -28,14 +28,14 @@ void setupMotorComponent()
 	//Create Angle Queue
 	//Create Position Task
 
-	BaseType_t status1= xTaskCreate(motorTask, "MotorTask",200, (void*)motor_queue, 3,NULL);
+	BaseType_t status1= xTaskCreate(motorTask, "MotorTask",200, (void*)motor_queue, 2,NULL);
 	if (status1 !=pdPASS){
 		printf("Motor Task creation failed!\r\n");
 		while(1);
 
 	}
 
-	BaseType_t status2= xTaskCreate(positionTask, "PositionTask",200, (void*)angle_queue, 3,NULL);
+	BaseType_t status2= xTaskCreate(positionTask, "PositionTask",200, (void*)angle_queue, 2,NULL);
 	if (status2 !=pdPASS){
 		printf("Motor Position Task creation failed!\r\n");
 		while(1);
@@ -150,11 +150,12 @@ void motorTask(void* pvParameters)
 
     	}
 
-    	dutyCycleServoMotor=input_speed*0.025f/100.0f +0.0615;
-    	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, dutyCycleServoMotor);
 
+    	dutyCycleServoMotor=input_speed*0.025f/100.0f +0.075;
+    	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, dutyCycleServoMotor);
+    	printf("Recieved motor speed:%d\n",input_speed);
     	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
-    	vTaskDelay(100/ portTICK_PERIOD_MS);
+    	vTaskDelay(1/ portTICK_PERIOD_MS);
     }
 
 }
@@ -179,11 +180,13 @@ void positionTask(void* pvParameters)
     		while(1);
 
     	}
+
     	dutyCycleServoMotor=position*0.025f/100.0f +0.075;
     	updatePWM_dutyCycle(FTM_CHANNEL_SERVO_MOTOR, dutyCycleServoMotor);
-    	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
-
-    	vTaskDelay(50/ portTICK_PERIOD_MS);
+    	printf("Received position :%d\n",position);
+//    	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
+//
+//    	vTaskDelay(1/ portTICK_PERIOD_MS);
 
     }
 }

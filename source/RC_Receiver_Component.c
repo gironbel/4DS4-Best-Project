@@ -6,19 +6,18 @@ TaskHandle_t rc_task_handle;
 void setupRCReceiverComponent()
 {
 	setupRCPins();
-
 	setupUART_RC();
 
 	RC_queues controller_data;
-	controller_data.motor_q = motor_queue;
-	controller_data.position_q = angle_queue;
+	controller_data.motor_q = &motor_queue;
+	controller_data.position_q = &angle_queue;
 
     /*************** RC Task ***************/
 	//Create RC Semaphore
 
 
 	//Create RC Task
-	BaseType_t status1= xTaskCreate(rcTask, "RCInput",200,(void*)&controller_data,2,NULL);
+	BaseType_t status1= xTaskCreate(rcTask, "RCInput",200,(void*)&controller_data,3,NULL);
 	if (status1 !=pdPASS){
 		printf("RCInput Task creation failed!\r\n");
 		while(1);
@@ -52,47 +51,61 @@ void rcTask(void* pvParameters)
 	uint8_t* ptr = (uint8_t*) &rc_values;
 	BaseType_t status;
 	//RC task implementation
+	QueueHandle_t motor_q= motor_queue;
+	QueueHandle_t angle_q=angle_queue;
+//	QueueHandle_t motor_q = ((RC_queues*)pvParameters)->motor_q; //dereferencing
+//	QueueHandle_t angle_q = ((RC_queues*)pvParameters)->position_q;
 
-	QueueHandle_t motor_queue = ((RC_queues*)pvParameters)->motor_q; //dereferencing
-	QueueHandle_t angle_queue = ((RC_queues*)pvParameters)->position_q;
-
-	int scaled_speed;
-	int scaled_position;
+	int scaled_speed,scaled_position;
 
 	while (1)
 	{
 		UART_ReadBlocking(UART1, ptr, 1);
-		if(*ptr != 0x20)
-		continue;
+		if(*ptr != 0x20){
+			continue;}
 
-		PRINTF("Begin data input.\r\n");
 		UART_ReadBlocking(UART1, &ptr[1], sizeof(rc_values) - 1);
 		if(rc_values.header == 0x4020)
 		{
-			scaled_speed = rc_values.ch2 * 0.01f /100.0f - 0.015; //right joystick up and down to control accel
-			status = xQueueSendToBack(motor_queue, (void*) scaled_speed, portMAX_DELAY); //will write the string at the back of the queue
+			scaled_speed = (rc_values.ch3 - 1000)/10; //right joystick up and down to control accel
+
+			//Reverse motor speed if channel 6 is set
+			if (rc_values.ch6 > 1500){
+				scaled_speed *=-1;
+			}
+			// Setting different speed modes. 25 power in lowest setting, half at middle and full at full setting
+			switch (rc_values.ch5){
+			case 1500:
+				scaled_speed *= .5;
+				break;
+			case 2000:
+				break;
+			default:
+				scaled_speed *= .25;
+			}
+			status = xQueueSendToBack(motor_queue, (void*) &scaled_speed, portMAX_DELAY); //will write the string at the back of the queue
+			if (status != pdPASS) //check if sending function was executed correctly
+			{
+				PRINTF("Queue Send failed!.\r\n");
+				while (1);
+			}
+			scaled_position = (rc_values.ch1 - 1500)/5;  //left joystick left and right to control angle of wheels
+			status = xQueueSendToBack(angle_queue, (void*) &scaled_position, portMAX_DELAY); //will write the string at the back of the queue
 			if (status != pdPASS) //check if sending function was executed correctly
 			{
 				PRINTF("Queue Send failed!.\r\n");
 				while (1);
 			}
 
-			scaled_position = rc_values.ch3 * 0.01f /100.0f  - 0.015;  //left joystick left and right to control angle of wheels
-			status = xQueueSendToBack(angle_queue, (void*) scaled_position, portMAX_DELAY); //will write the string at the back of the queue
-			if (status != pdPASS) //check if sending function was executed correctly
-			{
-				PRINTF("Queue Send failed!.\r\n");
-				while (1);
-			}
-
-			printf("Channel 1 = %d\t", rc_values.ch1);
-			printf("Channel 2 = %d\t", rc_values.ch2);
-			printf("Channel 3 = %d\t", rc_values.ch3);
-			printf("Channel 4 = %d\t", rc_values.ch4);
-			printf("Channel 5 = %d\t", rc_values.ch5);
-			printf("Channel 6 = %d\t", rc_values.ch6);
-			printf("Channel 7 = %d\t", rc_values.ch7);
-			printf("Channel 8 = %d\r\n", rc_values.ch8);
+			//printf("Sent signals: %d %d\n",scaled_speed,scaled_position);
+//			printf("Channel 1 = %d\t", rc_values.ch1);
+//			printf("Channel 2 = %d\t", rc_values.ch2);
+//			printf("Channel 3 = %d\t", rc_values.ch3);
+//			printf("Channel 4 = %d\t", rc_values.ch4);
+//			printf("Channel 5 = %d\t", rc_values.ch5);
+//			printf("Channel 6 = %d\t", rc_values.ch6);
+//			printf("Channel 7 = %d\t", rc_values.ch7);
+//			printf("Channel 8 = %d\r\n", rc_values.ch8);
 		}
 
 	}
