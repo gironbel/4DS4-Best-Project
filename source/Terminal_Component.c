@@ -2,6 +2,8 @@
 
 EventGroupHandle_t event_group;
 QueueHandle_t uart_queue;
+char ch;
+int new_char=0;
 
 void setupTerminalComponent()
 {
@@ -12,13 +14,13 @@ void setupTerminalComponent()
 	setupUART();
 
     /*************** UART Task ***************/
-	uart_queue = xQueueCreate(10, sizeof(char*));
+	uart_queue = xQueueCreate(2, sizeof(int));
 	if (uart_queue == NULL)
 	{
 		PRINTF("Queue creation failed!.\r\n");
 		while (1);
 	}
-    status = xTaskCreate(uartTask, "UART task", 200, NULL, 2, NULL);
+    status = xTaskCreate(uartTask, "UARTtask", 200, (void*)uart_queue, 3, NULL);
     if (status != pdPASS)
     {
         PRINTF("Task creation failed!.\r\n");
@@ -36,7 +38,7 @@ void setupTerminalPins()
 	PORT_SetPinMux(PORTC,13U,kPORT_MuxAlt3); //port C pin 13, function 3 (UART4 CTS)
     PORT_SetPinMux(PORTC,14U,kPORT_MuxAlt3); //port C pin 14, function 3 (UART4 RX)
 	PORT_SetPinMux(PORTC,15U,kPORT_MuxAlt3); //port C pin 15, function 3 (UART4 TX)
-	PORT_SetPinMux(PORTE,27U,kPORT_MuxAlt3); //port E pin 27, function 3 (UART4 RTS)
+	PORT_SetPinMux(PORTC,12U,kPORT_MuxAlt3); //port E pin 12, function 3 (UART4 RTS)
 }
 
 void sendMessage(const char *format, ...)
@@ -75,29 +77,58 @@ void setupUART()
 	EnableIRQ(UART4_RX_TX_IRQn);
 }
 
+
+
 void uartTask(void* pvParameters)
 {
 	char* welcome_message = "UART task started\n\r";
 	char* received_str;
 	BaseType_t status;
-
+	QueueHandle_t queue= (QueueHandle_t)pvParameters;
+	int speed=0;
 	UART_WriteBlocking(TARGET_UART, welcome_message, strlen(welcome_message));
-
+	printf(welcome_message);
 	while(1)
 	{
-		status = xQueueReceive(uart_queue, (void *) &received_str, portMAX_DELAY);
-		if (status != pdPASS)
-		{
-			PRINTF("Queue Send failed!.\r\n");
-			while (1);
-		}
-		UART_WriteBlocking(TARGET_UART, received_str, strlen(received_str));
-		vPortFree(received_str);
-	}
-}
+		printf("Print something before new char\n");
+			if(new_char){
+				printf("Recieved char:%c\n",ch);
+				switch (ch){
+				case 'w':
+					speed= 25;
 
-char ch;
-int new_char=0;
+					break;
+				case 'a':
+					break;
+				case 's':
+					speed = -25;
+					break;
+				case 'd':
+					break;
+				}
+				new_char = 0;
+			}else {
+				speed =0;
+			}
+			if(xQueueSendToBack(uart_queue, (void *)&speed , portMAX_DELAY) != pdPASS )
+				{
+					PRINTF("Send message to uart_queue failed!.\r\n");
+					while (1);
+				}
+
+			//	printf("Delaying task\n");
+				vTaskDelay(10/ portTICK_PERIOD_MS);
+	}
+//	sendMessage("Sending a message\n");
+//	printf("\n"
+//			"In terminal task\n");
+//	while(1){
+//		if(new_char){
+//		printf("Recieved char:%c\n",ch);
+//		new_char = 0;}
+//		vTaskDelay(10/ portTICK_PERIOD_MS);
+//	}
+}
 
 void UART4_RX_TX_IRQHandler()
 {
@@ -109,6 +140,15 @@ void UART4_RX_TX_IRQHandler()
 
 void terminalControlTask(void* pvParameters)
 {
+	sendMessage("Sending a message\n");
+	printf("\n"
+			"In terminal task\n");
+	while(1){
+		if(new_char){
+		printf("Recieved char:%c\n",ch);
+		new_char = 0;}
+		vTaskDelay(10/ portTICK_PERIOD_MS);
+	}
 	//Terminal Control Task implementation
 	//bonus
 }

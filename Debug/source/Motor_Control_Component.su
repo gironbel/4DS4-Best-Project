@@ -8,4 +8,4 @@ C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_ftm.h:1027:20:FTM_SetSof
 ../source/Motor_Control_Component.c:82:6:setupServo	56	static
 ../source/Motor_Control_Component.c:105:6:updatePWM_dutyCycle	32	static
 ../source/Motor_Control_Component.c:132:6:motorTask	32	static
-../source/Motor_Control_Component.c:162:6:positionTask	32	static
+../source/Motor_Control_Component.c:161:6:positionTask	32	static

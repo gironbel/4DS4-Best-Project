@@ -43,13 +43,13 @@ void setupMotorComponent()
 	}
 }
 
-void firstRun(){
+void firstRun(){ //startUp
 
     for (volatile int i = 0U; i<1000000; i++)
     	__asm("NOP"); //do nothing
-	updatePWM_dutyCycle(FTM_CHANNEL_SERVO_MOTOR, 0.075);
-	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, 0.06);
-	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
+	//updatePWM_dutyCycle(FTM_CHANNEL_SERVO_MOTOR, 0.075);
+	//updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, 0.06);
+	//FTM_SetSoftwareTrigger(FTM_MOTOR,true);
 }
 
 void setupMotorPins()
@@ -143,18 +143,17 @@ void motorTask(void* pvParameters)
 
     while (1)
     {
-    	status = xQueueReceive(motor_q,(void*)&input_speed,portMAX_DELAY);
-    	if (status !=pdPASS){
+    	status = xQueueReceive(uart_queue,(void*)&input_speed,portMAX_DELAY); //dequeue each value as it comes
+    	if (status !=pdPASS){ //check if queue receive was successful
     		printf("Queue receive for DC motor failed!\r\n");
     		while(1);
-
     	}
 
-    	dutyCycleMotor=input_speed*0.025f/100.0f +0.075;
-    	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, dutyCycleMotor);
+    	dutyCycleMotor=input_speed*0.025f/100.0f +0.079; //scale down input speed to within 0.05 and 0.1 PWM duty cycle
+    	updatePWM_dutyCycle(FTM_CHANNEL_DC_MOTOR, dutyCycleMotor); //send dutycycle to ftm channel
     	printf("Received motor speed:%d\n",input_speed);
-    	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
-    	vTaskDelay(1/ portTICK_PERIOD_MS);
+    	FTM_SetSoftwareTrigger(FTM_MOTOR,true); //update motor
+    	vTaskDelay(1/ portTICK_PERIOD_MS); //wait 1 mS
     }
 
 }
@@ -173,16 +172,15 @@ void positionTask(void* pvParameters)
 
     while (1)
     {
-    	status = xQueueReceive(position_q,(void*)&position,portMAX_DELAY);
-    	if (status !=pdPASS){
+    	status = xQueueReceive(position_q,(void*)&position,portMAX_DELAY); //dequeue each value as it comes
+    	if (status !=pdPASS){ //check if queue receive was successful
     		printf("Queue receive for position servo failed!\r\n");
     		while(1);
-
     	}
 
-    	dutyCycleServoMotor=position*0.025f/100.0f + 0.075;
+    	dutyCycleServoMotor=position*0.025f/100.0f + 0.075; //scale down input position to within 0.05 and 0.1 PWM duty cycle
     	updatePWM_dutyCycle(FTM_CHANNEL_SERVO_MOTOR, dutyCycleServoMotor);
-    	printf("Received position :%d\n",position);
+    	//printf("Received position :%d\n",position);
 //    	FTM_SetSoftwareTrigger(FTM_MOTOR,true);
 //
 //    	vTaskDelay(1/ portTICK_PERIOD_MS);

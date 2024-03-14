@@ -13,9 +13,6 @@ void setupRCReceiverComponent()
 	controller_data.position_q = &angle_queue;
 	controller_data.led_q = &led_queue;
 
-    /*************** RC Task ***************/
-	//Create RC Semaphore
-
 
 	//Create RC Task
 	BaseType_t status1= xTaskCreate(rcTask, "RCInput",200,(void*)&controller_data,3,NULL);
@@ -60,7 +57,7 @@ void rcTask(void* pvParameters)
 //	QueueHandle_t angle_q = ((RC_queues*)pvParameters)->position_q;
 
 	int scaled_speed,scaled_position;
-	int rc_speed, reflected_value;
+	int mode, reflected_value;
 
 	while (1)
 	{
@@ -72,26 +69,28 @@ void rcTask(void* pvParameters)
 		if(rc_values.header == 0x4020)
 		{
 			scaled_speed = (rc_values.ch3 - 1000)/10; //left joystick vertical axis to control accel
-			rc_speed = rc_values.ch5;
-			printf("Channel 5 = %d\n", rc_speed);
+			mode = rc_values.ch5;
+			//printf("Channel 5 = %d\n", mode);
 			//Reverse motor speed if channel 6 is set
-			if (rc_values.ch6 > 1500){
+			if (rc_values.ch6 >= 1500){
 				scaled_speed *=-1;
-				printf("Wheels are moving backwards\n");
+			//	printf("Wheels are moving backwards\n");
 			}
 			else
 			{
-				printf("Wheels are moving forwards\n");
+			//	printf("Wheels are moving forwards\n");
 			}
 			// Setting different speed modes. 25 power in lowest setting, half at middle and full at full setting
 			switch (rc_values.ch5){
-			case 1500:
-				scaled_speed *= .5;
+			case 1500: //medium speed setting
+				//scaled_speed *= .5;
+				scaled_speed *= .15;
 				break;
-			case 2000:
+			case 2000: //high speed setting
 				break;
-			default:
-				scaled_speed *= .25;
+			default: //low speed default
+				//scaled_speed *= .25;
+				scaled_speed *= .08;
 			}
 			status = xQueueSendToBack(motor_queue, (void*) &scaled_speed, portMAX_DELAY);
 			if (status != pdPASS) //check if sending function was executed correctly
@@ -99,18 +98,18 @@ void rcTask(void* pvParameters)
 				PRINTF("Queue Send failed!.\r\n");
 				while (1);
 			}
-			status = xQueueSendToBack(led_queue, (void*) &rc_speed, portMAX_DELAY); //sending speed_data to led queue
+			status = xQueueSendToBack(led_queue, (void*) &mode, portMAX_DELAY); //sending speed_data to led queue
 			if (status != pdPASS) //check if sending function was executed correctly
 			{
 				PRINTF("Queue Send failed!.\r\n");
 				while (1);
 			}
 
-			//reflected_value = (rc_values.ch1)*(-1) + 3000; //reflected rotation for more intuitive controls
-			scaled_position = (rc_values.ch1 - 1500)/5;  //right joystick horizontal axis
-			//scaled_position = (reflected_value - 1500)/5;
+			reflected_value = (rc_values.ch1)*(-1) + 3000; //reflected rotation for more intuitive controls 9//right joystick horizontal axis)
+			//scaled_position = (rc_values.ch1 - 1500)/5;
+			scaled_position = (reflected_value - 1500)/5; //scaled to be 0 - 100
 
-			status = xQueueSendToBack(angle_queue, (void*) &scaled_position, portMAX_DELAY);
+			status = xQueueSendToBack(angle_queue, (void*) &scaled_position, portMAX_DELAY); //send scaled position data to queue
 			if (status != pdPASS) //check if sending function was executed correctly
 			{
 				PRINTF("Queue Send failed!.\r\n");

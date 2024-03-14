@@ -33,26 +33,6 @@ void setupLEDPins();
 
 void ledTask(void* pvParameters);
 
-//#define moduleA ((GPIO_MODULE*)0x400FF000) //start point for all functions of portA
-//#define moduleB ((GPIO_MODULE*)0x400FF040) //start point for all functions of portB
-#define moduleC ((GPIO_MODULE*)0x400FF080) //start point for all functions of portC
-#define moduleD ((GPIO_MODULE*)0x400FF0C0) //start point for all functions of portD
-
-
-typedef struct __attribute__((__packed__)) //from lab0
-{
-	//each register 4 bytes (32 bit width), all contiguous in memory
-	int PDOR;
-	int PSOR;
-	int PCOR;
-	int PTOR;
-	int PDIR;
-	int PDDR;
-
-}GPIO_MODULE;
-
-void activateGPIOPin(GPIO_MODULE *modulex, uint32_t pin);
-void portToggle(GPIO_MODULE *modulex, uint32_t pin);
 void longDelay();
 
 #endif /* TERMINAL_COMPONENT_H */

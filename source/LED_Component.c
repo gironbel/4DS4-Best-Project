@@ -92,16 +92,6 @@ void setupLEDs()
 
 }
 
-void activateGPIOPin(GPIO_MODULE *modulex, uint32_t pin) //sets the pins we want to be output (hardcoded, no input option, but maybe later)
-{
-	modulex -> PDDR |= (1UL << pin); //will set the chosen pin to 1
-}
-
-void portToggle(GPIO_MODULE *modulex, uint32_t pin)
-{
-	modulex -> PTOR |= (1UL<<pin); //toggle the pin inputed by setting that bit to 1 in the toggle register
-}
-
 void longDelay(void) //Eight times lower frequency when used for toggling LEDs compared to delay()
 {
 	volatile uint32_t i = 0;
@@ -119,7 +109,7 @@ void ledTask(void* pvParameters) //LED task implementation
 
 	while(1)
 	{
-		status = xQueueReceive(speed_data,(void*)&led_mode,portMAX_DELAY);
+		status = xQueueReceive(speed_data,(void*)&led_mode,portMAX_DELAY); //receive mode
 		if (status !=pdPASS){
 			printf("Queue receive for led speed data failed!\r\n");
 		    while(1);
@@ -132,7 +122,7 @@ void ledTask(void* pvParameters) //LED task implementation
 			 FTM_SetSoftwareTrigger(FTM3, true);
 			 break;
 		case 2000: //red
-			 FTM_UpdatePwmDutycycle(FTM3, kFTM_Chnl_1, kFTM_EdgeAlignedPwm, 100); //R
+			 FTM_UpdatePwmDutycycle(FTM3, kFTM_Chnl_1, kFTM_EdgeAlignedPwm, 25); //R
 			 FTM_UpdatePwmDutycycle(FTM3, kFTM_Chnl_5, kFTM_EdgeAlignedPwm, 0); //G
 			 FTM_UpdatePwmDutycycle(FTM3, kFTM_Chnl_4, kFTM_EdgeAlignedPwm, 0); //B
 			 FTM_SetSoftwareTrigger(FTM3, true);

@@ -2,10 +2,10 @@ C:\Users\gironbel\Desktop\4DS4-Best-Project\CMSIS/core_cm4.h:1679:22:__NVIC_Enab
 C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_common_arm.h:499:24:EnableIRQ	24	static
 C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
 C:\Users\gironbel\Desktop\4DS4-Best-Project\drivers/fsl_uart.h:667:23:UART_ReadByte	16	static
-../source/Terminal_Component.c:6:6:setupTerminalComponent	24	static
-../source/Terminal_Component.c:33:6:setupTerminalPins	8	static
-../source/Terminal_Component.c:42:6:sendMessage	16	static
-../source/Terminal_Component.c:60:6:setupUART	24	static
-../source/Terminal_Component.c:78:6:uartTask	40	static
-../source/Terminal_Component.c:102:6:UART4_RX_TX_IRQHandler	8	static
-../source/Terminal_Component.c:110:6:terminalControlTask	16	static
+../source/Terminal_Component.c:8:6:setupTerminalComponent	24	static
+../source/Terminal_Component.c:35:6:setupTerminalPins	8	static
+../source/Terminal_Component.c:44:6:sendMessage	16	static
+../source/Terminal_Component.c:62:6:setupUART	24	static
+../source/Terminal_Component.c:82:6:uartTask	32	static
+../source/Terminal_Component.c:133:6:UART4_RX_TX_IRQHandler	8	static
+../source/Terminal_Component.c:141:6:terminalControlTask	16	static
